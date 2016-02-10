@@ -1,11 +1,26 @@
+<style>
+body {
+  font-family: helvetica;
+  padding: 50px;
+}
+</style>
+
 <h1>Welcome to my awesome freelancing website!</h1>
+
+<p>I'm currently <span class="container"></span>.</p>
 
 <link href='lib/availability.css' rel="stylesheet" />
 <script src='lib/availability.js'></script>
 
 <script>
-  new Availability({
+  Availability.badge({
+    user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
+    baseUrl: 'http://my.cushionapp.dev:5000',
+    container: document.querySelector('.container')
+  })
+
+  Availability.ribbon({
     user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
     baseUrl: 'http://my.cushionapp.dev:5000'
-  }).render();
+  })
 </script>

@@ -1,16 +1,35 @@
-.availability--available .availability-banner {
-  fill: #6BBD2E;
+.availability-ribbon.availability--available .availability-banner {
+  fill: rgb(107, 189, 46);
 }
 
-.availability--soon .availability-banner {
-  fill: #3498DB;
+.availability-ribbon.availability--soon .availability-banner {
+  fill: rgb(52, 152, 219);
 }
 
-.availability--unavailable .availability-banner {
-  fill: #D8D8D8;
+.availability-ribbon.availability--unavailable .availability-banner {
+  fill: rgb(216, 216, 216);
 }
 
 .availability-text {
   font-family: Helvetica;
-  fill: #FFF;
+  fill: #fff;
+}
+
+
+.availability-badge {
+  border-radius: 2px;
+  font-weight: normal;
+  padding: 3px 4px 1px;
+}
+
+.availability-badge.availability--available {
+  background-color: rgba(107, 189, 46, 0.3);
+}
+
+.availability-badge.availability--soon {
+  background-color: rgba(52, 152, 219, 0.3);
+}
+
+.availability-badge.availability--unavailable {
+  background-color: rgba(216, 216, 216, 0.3);
 }
