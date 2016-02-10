@@ -1,0 +1,16 @@
+.availability--available .availability-banner {
+  fill: #6BBD2E;
+}
+
+.availability--soon .availability-banner {
+  fill: #3498DB;
+}
+
+.availability--unavailable .availability-banner {
+  fill: #D8D8D8;
+}
+
+.availability-text {
+  font-family: Helvetica;
+  fill: #FFF;
+}
