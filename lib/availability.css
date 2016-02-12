@@ -1,13 +1,13 @@
 .availability-ribbon.availability--available .availability-banner {
-  fill: rgb(107, 189, 46);
+  fill: #6BBD2E;
 }
 
 .availability-ribbon.availability--soon .availability-banner {
-  fill: rgb(52, 152, 219);
+  fill: #3498DB;
 }
 
 .availability-ribbon.availability--unavailable .availability-banner {
-  fill: rgb(216, 216, 216);
+  fill: #9E5697;
 }
 
 .availability-text {
@@ -19,17 +19,18 @@
 .availability-badge {
   border-radius: 2px;
   font-weight: normal;
+  text-transform: lowercase;
   padding: 3px 4px 1px;
 }
 
 .availability-badge.availability--available {
-  background-color: rgba(107, 189, 46, 0.3);
+  background-color: #E1F3CB;
 }
 
 .availability-badge.availability--soon {
-  background-color: rgba(52, 152, 219, 0.3);
+  background-color: #CFF2FF;
 }
 
 .availability-badge.availability--unavailable {
-  background-color: rgba(216, 216, 216, 0.3);
+  background-color: #E8D4E6;
 }
