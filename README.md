@@ -1,5 +1,5 @@
-# availability.js
-Availability badge with data from cushionapp.com
+# Availability.js
+Availability badge with data from [cushionapp.com](http://cushionapp.com)
 
 ### Usage
 
