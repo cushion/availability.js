@@ -1,0 +1,24 @@
+{
+  "name": "cushion-availability",
+  "version": "0.0.1",
+  "description": "Display your Cushion availability",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cushion/availability.js.git"
+  },
+  "keywords": [
+    "availability",
+    "cushion",
+    "available"
+  ],
+  "author": "Cushion",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cushion/availability.js/issues"
+  },
+  "homepage": "https://github.com/cushion/availability.js#readme"
+}

@@ -1,5 +1,5 @@
-(function (window, document) {
-  'use strict';
+;(function () {
+  "use strict";
 
   var MINUTE = 60000
   var HOUR = MINUTE * 60
@@ -12,7 +12,7 @@
   var UNAVAILABLE = 'unavailable'
   var SOON = 'soon'
 
-  window.Availability = function (opts) {
+  var  Availability = function (opts) {
     this.baseUrl = BASE_URL
     this.renderer = function noop () {}
 
@@ -24,17 +24,12 @@
       this.user = opts
     }
 
-    if (!this.user) throw('Must specify user')
+    if (!this.user) console.error('Must specify a user')
   }
 
   Availability.prototype.render = function () {
-    this.request()
-  }
-
-  Availability.prototype.request = function () {
     var xhr = new XMLHttpRequest()
     xhr.addEventListener('load', onLoad(this.renderer.bind(this)))
-    xhr.addEventListener('error', onError)
     xhr.open('GET', this.baseUrl + '/api/v1/users/' + this.user + '/availability')
     xhr.send()
   }
@@ -51,7 +46,8 @@
 
   function onLoad (fn) {
     return function () {
-      if (this.status !== 200) return onError(this.status)
+      if (this.status !== 200) return console.error('Could not load users availability.', this.status)
+
       var data = JSON.parse(this.response)
 
       if (null === data.availability) return fn(UNAVAILABLE, null, 0)
@@ -62,10 +58,6 @@
 
       return fn(availability, date, hours)
     }
-  }
-
-  function onError (e) {
-    console.log('Error: ', e)
   }
 
   Availability.utils = {}
@@ -118,10 +110,10 @@
     return c
   }
 
-  function createNestedElement (el, name) {
+  function createNestedElement (parent, el) {
     var attrs = Array.prototype.slice.call(arguments, 2)
-    var newElement = document.createElementNS(el.namespaceURI, name)
-    el.appendChild(newElement)
+    var newElement = document.createElementNS(parent.namespaceURI, el)
+    parent.appendChild(newElement)
     if (attrs.length > 0) {
       attrs.unshift(newElement)
       setAttributes.apply(this, attrs)
@@ -211,4 +203,9 @@
     new Availability(merge(options, { renderer: renderer })).render()
   }
 
-})(window, document)
+  if (typeof module !== 'undefined' && module.exports) {
+      module.exports = Availability
+  } else {
+    window.Availability = Availability
+  }
+})();
