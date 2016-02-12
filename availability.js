@@ -204,8 +204,16 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-      module.exports = Availability
+    module.exports = Availability
   } else {
     window.Availability = Availability
+    window.onload = function () {
+      var el = document.querySelector('script[data-user]')
+      if (!el) return
+      Availability.ribbon({
+        user: el.getAttribute('data-user'),
+        baseUrl: 'http://my.cushionapp.dev:5000'
+      })
+    }
   }
 })();

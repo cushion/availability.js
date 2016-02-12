@@ -2,7 +2,7 @@
   "name": "cushion-availability",
   "version": "0.0.1",
   "description": "Display your Cushion availability",
-  "main": "index.js",
+  "main": "availability.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
