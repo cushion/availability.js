@@ -7,7 +7,7 @@
   var WEEK = DAY * 7
   var MONTH = DAY * 30
   var YEAR = DAY * 365
-  var BASE_URL = 'https://my.cushionapp.com'
+  var BASE_URL = window.__availability_base_url || 'https://my.cushionapp.com'
   var AVAILABLE = 'available'
   var UNAVAILABLE = 'unavailable'
   var SOON = 'soon'
@@ -207,13 +207,14 @@
     module.exports = Availability
   } else {
     window.Availability = Availability
-    window.onload = function () {
-      var el = document.querySelector('script[data-user]')
-      if (!el) return
-      Availability.ribbon({
-        user: el.getAttribute('data-user'),
-        baseUrl: 'http://my.cushionapp.dev:5000'
-      })
+    var el = document.querySelector('script[data-user]')
+    if (!el) return
+    var user = el.getAttribute('data-user')
+    var badge = document.querySelector('[data-availability-badge]')
+    if (badge) {
+      Availability.badge({ user: user, container: badge })
+    } else {
+      Availability.ribbon({ user: user })
     }
   }
 })();

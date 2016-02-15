@@ -1,21 +1,29 @@
-<style>
-body {
-  font-family: helvetica;
-  padding: 50px;
-}
-</style>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>Availability.js</title>
+  <style>
+    body {
+      font-family: helvetica;
+      padding: 50px;
+    }
+  </style>
+  <link href="availability.css" rel="stylesheet" />
 
-<link href="css/style.css" rel="stylesheet" />
-<script src="availability.js" data-user="dfd64545-e7f2-466f-8d5f-f9c2b998f2ef"></script>
+  <!-- Dev mode -->
+  <script>window.__availability_base_url = 'http://my.cushionapp.dev:5000'</script>
+</head>
 
-<h1>Welcome to my awesome freelancing website!</h1>
+<body>
+  <h1>Welcome to my awesome freelancing website!</h1>
 
-<p>I'm currently <span class="container"></span>.</p>
+  <p>I'm currently <span data-availability-badge></span>.</p>
 
-<script>
-  Availability.badge({
-    user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
-    baseUrl: 'http://my.cushionapp.dev:5000',
-    container: document.querySelector('.container')
-  })
-</script>
+
+  <script src="availability.js" data-user="dfd64545-e7f2-466f-8d5f-f9c2b998f2ef"></script>
+  <script>
+    Availability.ribbon({ user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef' })
+  </script>
+</body>
+</html>
