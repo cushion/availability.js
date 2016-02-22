@@ -18,12 +18,20 @@
 <body>
   <h1>Welcome to my awesome freelancing website!</h1>
 
-  <p>I'm currently <span data-availability-badge></span>.</p>
+  <p>I'm currently <span class='badge'></span>.</p>
 
 
-  <script src="availability.js" data-user="dfd64545-e7f2-466f-8d5f-f9c2b998f2ef"></script>
+  <script src="availability.js"></script>
   <script>
-    Availability.ribbon({ user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef' })
+    Availability.ribbon({
+      user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
+      href: 'http://cushionapp.com'
+    })
+    Availability.badge({
+      user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
+      container: document.querySelector('.badge'),
+      href: 'http://cushionapp.com'
+    })
   </script>
 </body>
 </html>

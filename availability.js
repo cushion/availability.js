@@ -34,32 +34,6 @@
     xhr.send()
   }
 
-  function parseDate (date) {
-    date = date.split('-')
-
-    var year = parseInt(date[0])
-    var month = parseInt(date[1]) - 1
-    var day = parseInt(date[2])
-
-    return new Date(year, month, day)
-  }
-
-  function onLoad (fn) {
-    return function () {
-      if (this.status !== 200) return console.error('Could not load users availability.', this.status)
-
-      var data = JSON.parse(this.response)
-
-      if (null === data.availability) return fn(UNAVAILABLE, null, 0)
-
-      var date = parseDate(data.availability.available_on)
-      var hours = data.availability.hours_per_week
-      var availability = Availability.utils.availability(date)
-
-      return fn(availability, date, hours)
-    }
-  }
-
   Availability.utils = {}
 
   Availability.utils.availability = function (date) {
@@ -69,7 +43,7 @@
     return UNAVAILABLE
   }
 
-  Availability.utils.monthAbbr = function (date) {
+  Availability.utils.monthShort = function (date) {
     switch (date.getMonth()) {
     case 0:  return 'Jan'
     case 1:  return 'Feb'
@@ -103,11 +77,30 @@
     }
   }
 
-  function merge (a, b) {
-    var c = {}
-    for (var attr in a) { c[attr] = a[attr] }
-    for (var attr in b) { c[attr] = b[attr] }
-    return c
+  function parseDate (date) {
+    date = date.split('-')
+
+    var year = parseInt(date[0])
+    var month = parseInt(date[1]) - 1
+    var day = parseInt(date[2])
+
+    return new Date(year, month, day)
+  }
+
+  function onLoad (fn) {
+    return function () {
+      if (this.status !== 200) return console.error('Could not load users availability.', this.status)
+
+      var data = JSON.parse(this.response)
+
+      if (null === data.availability) return fn(UNAVAILABLE, null, 0)
+
+      var date = parseDate(data.availability.available_on)
+      var hours = data.availability.hours_per_week
+      var availability = Availability.utils.availability(date)
+
+      return fn(availability, date, hours)
+    }
   }
 
   function createNestedElement (parent, el) {
@@ -133,24 +126,28 @@
     return el
   }
 
+
+
+  // Ribbon renderer
   Availability.ribbon = function (options) {
     var container = options.container || document.body
+    var href = options.href
 
     function relative (availability, date) {
       switch (availability) {
       case AVAILABLE: return 'Available'
-      case SOON: return 'Available in ' + Availability.utils.monthAbbr(date)
+      case SOON: return 'Available in ' + Availability.utils.monthShort(date)
       case UNAVAILABLE: return 'Not Available'
       }
     }
 
-    function renderer (availability, date) {
+    options.renderer = function renderer (availability, date) {
       var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
       setAttributes(svg,
         ['width', '150px'],
         ['height', '150px'],
         ['style', 'position: absolute; top: 0; right: 0;'],
-        ['class', 'availability-ribbon ' + 'availability--' + availability]
+        ['class', 'availability-ribbon availability--' + availability]
       )
 
       var defs = createNestedElement(svg, 'defs')
@@ -176,14 +173,23 @@
       )
       textPath.textContent = relative(availability, date)
 
-      container.appendChild(svg)
+      if (href) {
+        var a = createNestedElement(container, 'a', ['href', href], ['target', '_blank'])
+        a.appendChild(svg)
+      } else {
+        container.appendChild(svg)
+      }
     }
 
-    new Availability(merge(options, { renderer: renderer })).render()
+    new Availability(options).render()
   }
 
+
+
+  // Badge renderer
   Availability.badge = function (options) {
     var container = options.container
+    var href = options.href
 
     function relative (availability, date) {
       switch (availability) {
@@ -193,16 +199,23 @@
       }
     }
 
-    function renderer (availability, date) {
-      var badge = createNestedElement(container, 'span',
-        ['class', 'availability-badge ' + 'availability--' + availability]
+    options.renderer = function renderer (availability, date) {
+      var badge = createNestedElement(container, (href ? 'a' : 'span'),
+        ['class', 'availability-badge availability--' + availability]
       )
+      if (href) {
+        badge.href = href
+        badge.target = '_blank'
+      }
       badge.innerText = relative(availability, date)
     }
 
-    new Availability(merge(options, { renderer: renderer })).render()
+    new Availability(options).render()
   }
 
+
+
+  // Export
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Availability
   } else {
