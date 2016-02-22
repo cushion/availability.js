@@ -10,6 +10,10 @@
   fill: #9E5697;
 }
 
+.availability-ribbon.availability--private .availability-banner {
+  fill: #84487E;
+}
+
 .availability-text {
   font-family: Helvetica;
   fill: #fff;
@@ -20,6 +24,7 @@
   border-radius: 2px;
   font-weight: normal;
   padding: 3px 4px 1px;
+  text-decoration: none;
 }
 
 .availability-badge.availability--available {
@@ -31,5 +36,9 @@
 }
 
 .availability-badge.availability--unavailable {
+  background-color: #E8D4E6;
+}
+
+.availability-badge.availability--private {
   background-color: #E8D4E6;
 }

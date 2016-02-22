@@ -11,6 +11,7 @@
   var AVAILABLE = 'available'
   var UNAVAILABLE = 'unavailable'
   var SOON = 'soon'
+  var PRIVATE = 'private'
 
   var  Availability = function (opts) {
     this.baseUrl = BASE_URL
@@ -89,7 +90,15 @@
 
   function onLoad (fn) {
     return function () {
-      if (this.status !== 200) return console.error('Could not load users availability.', this.status)
+      if (this.status === 401) {
+        console.error(
+          'Change the Availabilty badge setting to `public`: '
+          + BASE_URL + '/preferences#availability'
+        )
+        return fn(PRIVATE, null, 0)
+      }
+
+      if (this.status !== 200) return console.error('Cushion API Error', this.status)
 
       var data = JSON.parse(this.response)
 
@@ -138,6 +147,7 @@
       case AVAILABLE: return 'Available'
       case SOON: return 'Available in ' + Availability.utils.monthShort(date)
       case UNAVAILABLE: return 'Not Available'
+      case PRIVATE: return 'Error'
       }
     }
 
@@ -196,6 +206,7 @@
       case AVAILABLE: return 'available'
       case SOON: return 'booked until ' + Availability.utils.month(date)
       case UNAVAILABLE: return 'unavailable'
+      case PRIVATE: return 'error'
       }
     }
 
