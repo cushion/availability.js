@@ -14,24 +14,19 @@
   var PRIVATE = 'private'
 
   var  Availability = function (opts) {
-    this.baseUrl = BASE_URL
-    this.renderer = function noop () {}
-
     if (opts !== null && typeof opts === 'object') {
-      if (opts.user) this.user = opts.user
-      if (opts.renderer) this.renderer = opts.renderer
-      if (opts.baseUrl) this.baseUrl = opts.baseUrl
-    } else {
-      this.user = opts
+      this.user = opts.user
+      this.renderer = opts.renderer
     }
-
-    if (!this.user) console.error('Must specify a user')
   }
 
   Availability.prototype.render = function () {
+    if (!this.user) return console.error('Must set a user')
+    if (!this.renderer) return console.error('Must set a renderer')
+
     var xhr = new XMLHttpRequest()
     xhr.addEventListener('load', onLoad(this.renderer))
-    xhr.open('GET', this.baseUrl + '/api/v1/users/' + this.user + '/availability')
+    xhr.open('GET', BASE_URL + '/api/v1/users/' + this.user + '/availability')
     xhr.send()
   }
 
@@ -96,6 +91,7 @@
         return fn(PRIVATE, null, 0)
       }
 
+      if (this.status === 404) return console.error('That user ID wasnt found')
       if (this.status !== 200) return console.error('Cushion API Error', this.status)
 
       var data = JSON.parse(this.response)
