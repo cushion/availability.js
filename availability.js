@@ -30,21 +30,12 @@
 
   Availability.prototype.render = function () {
     var xhr = new XMLHttpRequest()
-    xhr.addEventListener('load', onLoad(this.renderer.bind(this)))
+    xhr.addEventListener('load', onLoad(this.renderer))
     xhr.open('GET', this.baseUrl + '/api/v1/users/' + this.user + '/availability')
     xhr.send()
   }
 
-  Availability.utils = {}
-
-  Availability.utils.availability = function (date) {
-    var diff = date - Date.now()
-    if (date && diff < MONTH) return AVAILABLE
-    if (date && diff < YEAR) return SOON
-    return UNAVAILABLE
-  }
-
-  Availability.utils.monthShort = function (date) {
+  Availability.monthShort = function (date) {
     switch (date.getMonth()) {
     case 0:  return 'Jan'
     case 1:  return 'Feb'
@@ -61,7 +52,7 @@
     }
   }
 
-  Availability.utils.month = function (date) {
+  Availability.month = function (date) {
     switch (date.getMonth()) {
     case 0:  return 'January'
     case 1:  return 'February'
@@ -88,6 +79,13 @@
     return new Date(year, month, day)
   }
 
+  function availability (date) {
+    var diff = date - Date.now()
+    if (date && diff < MONTH) return AVAILABLE
+    if (date && diff < YEAR) return SOON
+    return UNAVAILABLE
+  }
+
   function onLoad (fn) {
     return function () {
       if (this.status === 401) {
@@ -106,9 +104,9 @@
 
       var date = parseDate(data.availability.available_on)
       var hours = data.availability.hours_per_week
-      var availability = Availability.utils.availability(date)
+      var avail = availability(date)
 
-      return fn(availability, date, hours)
+      return fn(avail, date, hours)
     }
   }
 
@@ -145,7 +143,7 @@
     function relative (availability, date) {
       switch (availability) {
       case AVAILABLE: return 'Available'
-      case SOON: return 'Available in ' + Availability.utils.monthShort(date)
+      case SOON: return 'Available in ' + Availability.monthShort(date)
       case UNAVAILABLE: return 'Not Available'
       case PRIVATE: return 'Error'
       }
@@ -204,7 +202,7 @@
     function relative (availability, date) {
       switch (availability) {
       case AVAILABLE: return 'available'
-      case SOON: return 'booked until ' + Availability.utils.month(date)
+      case SOON: return 'booked until ' + Availability.month(date)
       case UNAVAILABLE: return 'unavailable'
       case PRIVATE: return 'error'
       }
@@ -231,14 +229,16 @@
     module.exports = Availability
   } else {
     window.Availability = Availability
-    var el = document.querySelector('script[data-user]')
-    if (!el) return
-    var user = el.getAttribute('data-user')
-    var badge = document.querySelector('[data-availability-badge]')
-    if (badge) {
-      Availability.badge({ user: user, container: badge })
-    } else {
-      Availability.ribbon({ user: user })
+    window.onload = function () {
+      var el = document.querySelector('script[data-user]')
+      if (!el) return
+      var user = el.getAttribute('data-user')
+      var badge = document.querySelector('[data-availability-badge]')
+      if (badge) {
+        Availability.badge({ user: user, container: badge })
+      } else {
+        Availability.ribbon({ user: user })
+      }
     }
   }
 })();
