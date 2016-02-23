@@ -12,27 +12,58 @@
       color: #000;
     }
   </style>
-  <link href="availability.css" rel="stylesheet">
 
   <!-- Dev mode -->
   <script>window.__availability_base_url = 'http://my.cushionapp.dev:5000'</script>
+
+  <link href="availability.css" rel="stylesheet">
+  <script src="availability.js"></script>
 </head>
 
 <body>
   <h1>Welcome to my awesome freelancing website!</h1>
 
-  <p>I'm currently <span class='badge'></span>.</p>
+  <p>I'm currently <span class="badge"></span>.</p>
 
-
-  <script src="availability.js"></script>
+  <!-- Show a contextual badge -->
   <script>
-    Availability.ribbon({
-      user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
-      href: 'http://cushionapp.com'
-    })
     Availability.badge({
       user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
       container: document.querySelector('.badge'),
+      href: 'http://cushionapp.com'
+    })
+  </script>
+
+
+
+  <p>
+    <img class="availability-image" width="300px" src="">
+    <br>
+    <code>current-availability.gif</code>
+  </p>
+
+  <!-- Example of a custom gif renderer -->
+  <script>
+    new Availability({
+      user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
+      renderer: function (availability) {
+        var img = document.querySelector('.availability-image')
+        if ('available' === availability)
+          img.src = 'http://i.giphy.com/urhcoANPxB3K8.gif'
+        if ('unavailable' === availability)
+          img.src = 'http://i.giphy.com/O4caHIyGGVTW.gif'
+        if ('soon' === availability)
+          img.src = 'http://i.giphy.com/ErLimaUL0blbW.gif'
+      }
+    }).render()
+  </script>
+
+
+
+  <!-- Add a ribbon to the corner of the page -->
+  <script>
+    Availability.ribbon({
+      user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
       href: 'http://cushionapp.com'
     })
   </script>
