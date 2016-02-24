@@ -241,7 +241,7 @@
         badge.href = href
         badge.target = '_blank'
       }
-      badge.innerText = relative.call(this)
+      badge.textContent = relative.call(this)
     }
 
     new Availability(options).render()
