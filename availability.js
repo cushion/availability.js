@@ -13,7 +13,7 @@
 
   var  Availability = function (opts) {
     if (opts !== null && typeof opts === 'object') {
-      this.user = opts.user
+      this.user_id = opts.user
       this.renderer = opts.renderer.bind(this)
     }
     this.date = null
@@ -22,12 +22,12 @@
   }
 
   Availability.prototype.render = function () {
-    if (!this.user) return console.error('Must set a user')
+    if (!this.user_id) return console.error('Must set a user')
     if (!this.renderer) return console.error('Must set a renderer')
 
     var xhr = new XMLHttpRequest()
     xhr.addEventListener('load', onLoad(this))
-    xhr.open('GET', BASE_URL + '/api/v1/users/' + this.user + '/availability')
+    xhr.open('GET', BASE_URL + '/api/v1/users/' + this.user_id + '/availability')
     xhr.send()
   }
 
@@ -104,11 +104,11 @@
         break
       case 200:
         var data = JSON.parse(this.response)
+        if (data.user) context.user = data.user
         if (data.availability) {
           context.date = parseDate(data.availability.available_on)
           context.hours = data.availability.hours_per_week
           context.availability = determineAvailability(context.date)
-          context.user = data.user
         }
         break
       }

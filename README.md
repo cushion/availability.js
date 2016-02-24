@@ -27,11 +27,12 @@ Same as the ribbon above, but add an `data-availability-badge` attribute where y
 
 It's possible to change the appearance of the badge and the ribbon using CSS but if that's too limiting you can define your own render function to assemble custom HTML, draw with canvas, or even play a silly video.
 
-Within the renderer function `this` is bound to the `Availabilty` object which, in addition to the [utility functions](#functions), will have three attributes set:
+Within the renderer function `this` is bound to the `Availabilty` object which, in addition to the [utility functions](#functions), will have additional attributes set:
 
 1. `this.availability`: A string with a value of `available`, `soon`, `unavailable` or `private`
 2. `this.date`: A date object, or null if the above is `unavailable` or `private`
 3. `this.hours`: A number ≥ 0, representing the number of hours of availability
+4. `this.user`: Basic user info, `nickname`, `color`, and `referral_code`
 
 The function should handle all logic on it's own, no return value is required. Here's an example of a simple gif renderer:
 
@@ -78,7 +79,7 @@ Returns the month name of `this.date` shortened to 3–5 characters.
 
 ##### `Availability.prototype.referralUrl()`
 
-Returns your user referral url.
+Returns users referral link.
 
 
 
