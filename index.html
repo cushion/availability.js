@@ -46,14 +46,11 @@
   <script>
     new Availability({
       user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
-      renderer: function (availability) {
+      renderer: function () {
         var img = document.querySelector('.availability-image')
-        if ('available' === availability)
-          img.src = 'http://i.giphy.com/urhcoANPxB3K8.gif'
-        if ('unavailable' === availability)
-          img.src = 'http://i.giphy.com/O4caHIyGGVTW.gif'
-        if ('soon' === availability)
-          img.src = 'http://i.giphy.com/ErLimaUL0blbW.gif'
+        if (this.isAvailable())   img.src = 'http://i.giphy.com/urhcoANPxB3K8.gif'
+        if (this.isUnavailable()) img.src = 'http://i.giphy.com/O4caHIyGGVTW.gif'
+        if (this.isSoon())        img.src = 'http://i.giphy.com/ErLimaUL0blbW.gif'
       }
     }).render()
   </script>

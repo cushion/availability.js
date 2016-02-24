@@ -27,37 +27,56 @@ Same as the ribbon above, but add an `data-availability-badge` attribute where y
 
 It's possible to change the appearance of the badge and the ribbon using CSS but if that's too limiting you can define your own render function to assemble custom HTML, draw with canvas, or even play a silly video.
 
-A render function can accept three arguments:
+Within the renderer function `this` is bound to the `Availabilty` object which, in addition to the [utility functions](#functions), will have three attributes set:
 
-~~~
-function (availability, date, hours)
-~~~
+1. `this.availability`: A string with a value of `available`, `soon`, `unavailable` or `private`
+2. `this.date`: A date object, or null if the above is `unavailable` or `private`
+3. `this.hours`: A number ≥ 0, representing the number of hours of availability
 
-1. `availability`: A string with a value of `available`, `soon`, `unavailable` or `private`
-2. `date`: A date object, or null if the above is `unavailable` or `private`
-3. `hours`: A number ≥ 0, representing the number of hours of availability
-
-The function should handle all logic on it's own, but there are some [utility functions](#functions) to deal with dates.
-
-Defining and using your renderer
+The function should handle all logic on it's own, no return value is required. Here's an example of a simple gif renderer:
 
 ~~~ javascript
-function coolRenderer (availability, date, hours) {
-  // Your code
+function gifRenderer () {
+  var img = document.querySelector('.image')
+  if (this.isAvailable())   img.src = 'http://i.giphy.com/urhcoANPxB3K8.gif'
+  if (this.isUnavailable()) img.src = 'http://i.giphy.com/O4caHIyGGVTW.gif'
+  if (this.isSoon())        img.src = 'http://i.giphy.com/ErLimaUL0blbW.gif'
 }
-new Availability({ user: '$YOUR_USER_ID', renderer: coolRenderer }).render()
+new Availability({ user: '$YOUR_USER_ID', renderer: gifRenderer }).render()
 ~~~
 
 
 ## Functions
 
-##### `Availability.month(date)`
 
-Takes a date object and returns the corresponding month name.
+##### `new Availability({options})`
 
-##### `Availability.monthShort(date)`
+Takes an options hash and returns an Availability object.
 
-Takes a date object and returns the corresponding month name shortened to 3–5 characters.
+- `options.user`: The user ID
+- `options.renderer`: A [renderer function](#building-a-custom-renderer)
+
+##### `Availability.prototype.render()`
+
+Calls the [`renderer`](#building-a-custom-renderer) function.
+
+##### `Availability.prototype.month()`
+
+Returns the month name of `this.date`.
+
+##### `Availability.prototype.monthShort()`
+
+Returns the month name of `this.date` shortened to 3–5 characters.
+
+##### `Availability.prototype.isAvailable()`
+
+##### `Availability.prototype.isUnvailable()`
+
+##### `Availability.prototype.isSoon()`
+
+##### `Availability.prototype.isPrivate()`
+
+## Builtin renderers
 
 ##### `Availability.badge({options})`
 
@@ -75,15 +94,4 @@ Takes an options hash, and display's a ribbon.
 - `options.user`: The user ID
 - `options.container`: Optional, an element to appended the ribbon too, `document.body` by default
 - `options.href`: Optional, if set the badge will link to this url
-
-##### `new Availability({options})`
-
-Takes an options hash and returns an Availability object.
-
-- `options.user`: The user ID
-- `options.renderer`: A [renderer function](#building-a-custom-renderer)
-
-##### `Availability.prototype.render()`
-
-Calls the `renderer` function.
 

@@ -4,9 +4,7 @@
   var MINUTE = 60000
   var HOUR = MINUTE * 60
   var DAY = HOUR * 24
-  var WEEK = DAY * 7
   var MONTH = DAY * 30
-  var YEAR = DAY * 365
   var BASE_URL = window.__availability_base_url || 'https://my.cushionapp.com'
   var AVAILABLE = 'available'
   var UNAVAILABLE = 'unavailable'
@@ -16,8 +14,11 @@
   var  Availability = function (opts) {
     if (opts !== null && typeof opts === 'object') {
       this.user = opts.user
-      this.renderer = opts.renderer
+      this.renderer = opts.renderer.bind(this)
     }
+    this.date = null
+    this.hours = 0
+    this.availability = UNAVAILABLE
   }
 
   Availability.prototype.render = function () {
@@ -25,13 +26,18 @@
     if (!this.renderer) return console.error('Must set a renderer')
 
     var xhr = new XMLHttpRequest()
-    xhr.addEventListener('load', onLoad(this.renderer))
+    xhr.addEventListener('load', onLoad(this))
     xhr.open('GET', BASE_URL + '/api/v1/users/' + this.user + '/availability')
     xhr.send()
   }
 
-  Availability.monthShort = function (date) {
-    switch (date.getMonth()) {
+  Availability.prototype.isAvailable = function () { return AVAILABLE === this.availability }
+  Availability.prototype.isUnavailable = function () { return UNAVAILABLE === this.availability }
+  Availability.prototype.isSoon = function () { return SOON === this.availability }
+  Availability.prototype.isPrivate = function () { return PRIVATE === this.availability }
+
+  Availability.prototype.monthShort = function () {
+    switch (this.date.getMonth()) {
     case 0:  return 'Jan'
     case 1:  return 'Feb'
     case 2:  return 'March'
@@ -47,8 +53,8 @@
     }
   }
 
-  Availability.month = function (date) {
-    switch (date.getMonth()) {
+  Availability.prototype.month = function () {
+    switch (this.date.getMonth()) {
     case 0:  return 'January'
     case 1:  return 'February'
     case 2:  return 'March'
@@ -74,35 +80,32 @@
     return new Date(year, month, day)
   }
 
-  function availability (date) {
+  function determineAvailability (date) {
     var diff = date - Date.now()
     if (date && diff < MONTH) return AVAILABLE
-    if (date && diff < YEAR) return SOON
+    if (date && diff < (10 * MONTH)) return SOON
     return UNAVAILABLE
   }
 
-  function onLoad (fn) {
+  function onLoad (context) {
     return function () {
-      if (this.status === 401) {
-        console.error(
-          'Change the Availabilty badge setting to `public`: '
-          + BASE_URL + '/preferences#availability'
-        )
-        return fn(PRIVATE, null, 0)
+      switch (this.status) {
+      default: return console.error('Cushion API Error', this.status)
+      case 404: return console.error('That user ID wasnt found')
+      case 401:
+        console.error('Change the Availabilty badge setting to `public`: ' + BASE_URL + '/preferences#availability')
+        context.availability = PRIVATE
+        break
+      case 200:
+        var data = JSON.parse(this.response)
+        if (data.availability) {
+          context.date = parseDate(data.availability.available_on)
+          context.hours = data.availability.hours_per_week
+          context.availability = determineAvailability(context.date)
+        }
+        break
       }
-
-      if (this.status === 404) return console.error('That user ID wasnt found')
-      if (this.status !== 200) return console.error('Cushion API Error', this.status)
-
-      var data = JSON.parse(this.response)
-
-      if (null === data.availability) return fn(UNAVAILABLE, null, 0)
-
-      var date = parseDate(data.availability.available_on)
-      var hours = data.availability.hours_per_week
-      var avail = availability(date)
-
-      return fn(avail, date, hours)
+      return context.renderer()
     }
   }
 
@@ -136,46 +139,60 @@
     var container = options.container || document.body
     var href = options.href
 
-    function relative (availability, date) {
-      switch (availability) {
+    function relative () {
+      switch (this.availability) {
       case AVAILABLE: return 'Available'
-      case SOON: return 'Available in ' + Availability.monthShort(date)
+      case SOON: return 'Available in ' + this.monthShort()
       case UNAVAILABLE: return 'Not Available'
       case PRIVATE: return 'Error'
       }
     }
 
-    options.renderer = function renderer (availability, date) {
+    options.renderer = function renderer () {
       var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
       setAttributes(svg,
         ['width', '150px'],
-        ['height', '150px'],
+        ['height', '160px'],
         ['style', 'position: absolute; top: 0; right: 0;'],
-        ['class', 'availability-ribbon availability--' + availability]
+        ['class', 'availability-ribbon ' + this.availability]
       )
 
       var defs = createNestedElement(svg, 'defs')
-      var path = createNestedElement(defs, 'path',
+      var availabilityPath = createNestedElement(defs, 'path',
         ['d', 'M17,0 L150,133 Z'],
-        ['id', 'text_path']
+        ['id', 'availability_path']
+      )
+      var powerPath = createNestedElement(defs, 'path',
+        ['d', 'M0,17 L183,200 Z'],
+        ['id', 'power_path']
       )
 
       var banner = createNestedElement(svg, 'path',
         ['d', 'M0,0 L50,0 L150,100 L150,150 L0,0 Z'],
-        ['class', 'availability-banner']
+        ['class', 'availability-ribbon__banner']
       )
 
-      var text = createNestedElement(svg, 'text',
+      var availabilityText = createNestedElement(svg, 'text',
         ['font-size', 16],
         ['text-anchor', 'middle'],
-        ['class', 'availability-text'],
+        ['class', 'availability-ribbon__text'],
         ['x', 96]
       )
-
-      var textPath = createNestedElement(text, 'textPath',
-        ['http://www.w3.org/1999/xlink', 'xlink:href', '#text_path']
+      var availabilityTextPath = createNestedElement(availabilityText, 'textPath',
+        ['http://www.w3.org/1999/xlink', 'xlink:href', '#availability_path']
       )
-      textPath.textContent = relative(availability, date)
+      availabilityTextPath.textContent = relative.call(this)
+
+      var powerText = createNestedElement(svg, 'text',
+        ['font-size', 12],
+        ['text-anchor', 'right'],
+        ['class', 'availability-ribbon__power'],
+        ['x', 90]
+      )
+      var powerTextPath = createNestedElement(powerText, 'textPath',
+        ['http://www.w3.org/1999/xlink', 'xlink:href', '#power_path']
+      )
+      powerTextPath.textContent = 'powered by Cushion'
 
       if (href) {
         var a = createNestedElement(container, 'a', ['href', href], ['target', '_blank'])
@@ -195,24 +212,24 @@
     var container = options.container
     var href = options.href
 
-    function relative (availability, date) {
-      switch (availability) {
+    function relative () {
+      switch (this.availability) {
       case AVAILABLE: return 'available'
-      case SOON: return 'booked until ' + Availability.month(date)
+      case SOON: return 'booked until ' + this.month()
       case UNAVAILABLE: return 'unavailable'
       case PRIVATE: return 'error'
       }
     }
 
-    options.renderer = function renderer (availability, date) {
+    options.renderer = function renderer () {
       var badge = createNestedElement(container, (href ? 'a' : 'span'),
-        ['class', 'availability-badge availability--' + availability]
+        ['class', 'availability-badge ' + this.availability]
       )
       if (href) {
         badge.href = href
         badge.target = '_blank'
       }
-      badge.innerText = relative(availability, date)
+      badge.innerText = relative.call(this)
     }
 
     new Availability(options).render()
