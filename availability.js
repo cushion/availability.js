@@ -70,6 +70,12 @@
     }
   }
 
+  Availability.prototype.referralUrl = function () {
+    if (this.user && this.user.referral_code) {
+      return 'http://get.cushionapp.com/' + this.user.referral_code
+    }
+  }
+
   function parseDate (date) {
     date = date.split('-')
 
@@ -102,6 +108,7 @@
           context.date = parseDate(data.availability.available_on)
           context.hours = data.availability.hours_per_week
           context.availability = determineAvailability(context.date)
+          context.user = data.user
         }
         break
       }
@@ -149,6 +156,8 @@
     }
 
     options.renderer = function renderer () {
+      if (href === undefined) href = this.referralUrl()
+
       var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
       setAttributes(svg,
         ['width', '150px'],
@@ -222,9 +231,12 @@
     }
 
     options.renderer = function renderer () {
+      if (href === undefined) href = this.referralUrl()
+
       var badge = createNestedElement(container, (href ? 'a' : 'span'),
         ['class', 'availability-badge ' + this.availability]
       )
+
       if (href) {
         badge.href = href
         badge.target = '_blank'

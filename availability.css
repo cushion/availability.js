@@ -1,3 +1,7 @@
+.availability-ribbon {
+  display: none;
+}
+
 .availability-ribbon.available .availability-ribbon__banner {
   fill: #6BBD2E;
 }
@@ -25,8 +29,16 @@
   transition: fill 0.2s ease;
 }
 
-.availability-ribbon:hover .availability-ribbon__power {
-  fill: rgba(187, 187, 187, 1);
+@media (min-width: 600px) {
+  .availability-ribbon {
+    display: block;
+  }
+}
+
+@media (min-width: 800px) {
+  .availability-ribbon:hover .availability-ribbon__power {
+    fill: rgba(187, 187, 187, 1);
+  }
 }
 
 

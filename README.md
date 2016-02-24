@@ -46,8 +46,8 @@ new Availability({ user: '$YOUR_USER_ID', renderer: gifRenderer }).render()
 ~~~
 
 
-## Functions
 
+## Functions
 
 ##### `new Availability({options})`
 
@@ -76,6 +76,12 @@ Returns the month name of `this.date` shortened to 3–5 characters.
 
 ##### `Availability.prototype.isPrivate()`
 
+##### `Availability.prototype.referralUrl()`
+
+Returns your user referral url.
+
+
+
 ## Builtin renderers
 
 ##### `Availability.badge({options})`
@@ -84,7 +90,7 @@ Takes an options hash, and display's a badge.
 
 - `options.user`: A user ID
 - `options.container`: An element to appended the badge too
-- `options.href`: Optional, if set the badge will link to this url
+- `options.href`: Optional, if set the badge will link to this url, defaults to your referral url (to unset use `null`)
 
 
 ##### `Availability.ribbon({options})`
@@ -93,5 +99,5 @@ Takes an options hash, and display's a ribbon.
 
 - `options.user`: The user ID
 - `options.container`: Optional, an element to appended the ribbon too, `document.body` by default
-- `options.href`: Optional, if set the badge will link to this url
+- `options.href`: Optional, if set the badge will link to this url, defaults to your referral url (to unset use `null`)
 
