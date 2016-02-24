@@ -5,6 +5,8 @@ Availability badge with data from [cushionapp.com](http://cushionapp.com)
 
 #### Simple Ribbon
 
+![](https://raw.githubusercontent.com/cushion/availability.js/master/examples/ribbon.gif)
+
 Include the following in your html, and replace your user ID in the `data-user` attribute on the script tag.
 
 ~~~ html
@@ -13,6 +15,8 @@ Include the following in your html, and replace your user ID in the `data-user` 
 ~~~
 
 #### Contextual Badge
+
+![](https://raw.githubusercontent.com/cushion/availability.js/master/examples/badge.gif)
 
 Same as the ribbon above, but add an `data-availability-badge` attribute where you want the badge displayed.
 
@@ -46,6 +50,7 @@ function gifRenderer () {
 new Availability({ user: '$YOUR_USER_ID', renderer: gifRenderer }).render()
 ~~~
 
+![](https://raw.githubusercontent.com/cushion/availability.js/master/examples/giphy.gif)
 
 
 ## Functions
