@@ -4,7 +4,7 @@
   "description": "Display your Cushion availability",
   "main": "availability.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "mkdir -p build && uglifyjs availability.js -m --lint --wrap Availability -o build/availability.js && uglifycss availability.css > build/availability.css"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/cushion/availability.js/issues"
   },
-  "homepage": "https://github.com/cushion/availability.js#readme"
+  "homepage": "https://github.com/cushion/availability.js#readme",
+  "devDependencies": {
+    "uglify-js": "^2.6.2",
+    "uglifycss": "0.0.20"
+  }
 }

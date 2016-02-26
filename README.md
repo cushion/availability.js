@@ -31,14 +31,7 @@ Same as the ribbon above, but add an `data-availability-badge` attribute where y
 
 It's possible to change the appearance of the badge and the ribbon using CSS but if that's too limiting you can define your own render function to assemble custom HTML, draw with canvas, or even play a silly video.
 
-Within the renderer function `this` is bound to the `Availabilty` object which, in addition to the [utility functions](#functions), will have additional attributes set:
-
-1. `this.availability`: A string with a value of `available`, `soon`, `unavailable` or `private`
-2. `this.date`: A date object, or null if the above is `unavailable` or `private`
-3. `this.hours`: A number ≥ 0, representing the number of hours of availability
-4. `this.user`: Basic user info, `nickname`, `color`, and `referral_code`
-
-The function should handle all logic on it's own, no return value is required. Here's an example of a simple gif renderer:
+Within the renderer function `this` is bound to an [`Availabilty` object](#availability-object). The function should handle all logic on it's own, and no return value is required. Here's an example of a simple gif renderer:
 
 ~~~ javascript
 function gifRenderer () {
@@ -47,48 +40,46 @@ function gifRenderer () {
   if (this.isUnavailable()) img.src = 'http://i.giphy.com/O4caHIyGGVTW.gif'
   if (this.isSoon())        img.src = 'http://i.giphy.com/ErLimaUL0blbW.gif'
 }
-new Availability({ user: '$YOUR_USER_ID', renderer: gifRenderer }).render()
+Availability.display({ user: '$YOUR_USER_ID', renderer: gifRenderer })
 ~~~
 
 ![](https://raw.githubusercontent.com/cushion/availability.js/master/examples/giphy.gif)
 
 
-## Functions
+## Availability object
 
-##### `new Availability({options})`
+An Availability object is bound to `this` within a renderer function, and has the following attributes:
 
-Takes an options hash and returns an Availability object.
+1. `this.availability`: A string with a value of `available`, `soon`, `unavailable` or `private`
+2. `this.date`: A date object, or null if the above is `unavailable` or `private`
+3. `this.hours`: A number ≥ 0, representing the number of hours of availability
+4. `this.user`: Basic user info, including `nickname`, `color`, and `referral_code`
 
-- `options.user`: The user ID
-- `options.renderer`: A [renderer function](#building-a-custom-renderer)
+There are also some helper functions:
 
-##### `Availability.prototype.render()`
-
-Calls the [`renderer`](#building-a-custom-renderer) function.
-
-##### `Availability.prototype.month()`
+##### `this.month()`
 
 Returns the month name of `this.date`.
 
-##### `Availability.prototype.monthShort()`
+##### `this.monthShort()`
 
 Returns the month name of `this.date` shortened to 3–5 characters.
 
-##### `Availability.prototype.isAvailable()`
+##### `this.isAvailable()`
 
-##### `Availability.prototype.isUnvailable()`
+##### `this.isUnvailable()`
 
-##### `Availability.prototype.isSoon()`
+##### `this.isSoon()`
 
-##### `Availability.prototype.isPrivate()`
+##### `this.isPrivate()`
 
-##### `Availability.prototype.referralUrl()`
+##### `this.referralUrl()`
 
 Returns users referral link.
 
 
 
-## Builtin renderers
+## Renderers
 
 ##### `Availability.badge({options})`
 
@@ -107,3 +98,10 @@ Takes an options hash, and display's a ribbon.
 - `options.container`: Optional, an element to appended the ribbon too, `document.body` by default
 - `options.href`: Optional, if set the badge will link to this url, defaults to your referral url (to unset use `null`)
 
+
+##### `Availability.display({options})`
+
+Takes an options hash and runs the given `renderer`.
+
+- `options.user`: The user ID
+- `options.renderer`: A [renderer function](#building-a-custom-renderer)

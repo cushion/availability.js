@@ -18,8 +18,8 @@
   <!-- Dev mode -->
   <script>window.__availability_base_url = 'http://my.cushionapp.dev:5000'</script>
 
-  <link href="availability.css" rel="stylesheet">
-  <script src="availability.js"></script>
+  <link href="build/availability.css" rel="stylesheet">
+  <script src="build/availability.js"></script>
 </head>
 
 <body>
@@ -45,7 +45,7 @@
 
   <!-- Example of a custom gif renderer -->
   <script>
-    new Availability({
+    Availability.display({
       user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
       renderer: function () {
         var img = document.querySelector('.availability-image')
@@ -53,7 +53,7 @@
         if (this.isUnavailable()) img.src = 'http://i.giphy.com/O4caHIyGGVTW.gif'
         if (this.isSoon())        img.src = 'http://i.giphy.com/ErLimaUL0blbW.gif'
       }
-    }).render()
+    })
   </script>
 
 
