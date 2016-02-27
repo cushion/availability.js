@@ -1,5 +1,8 @@
 # Availability.js
+
 Availability badge with data from [cushionapp.com](http://cushionapp.com)
+
+Start by downloading the repo and grabbing the files in the [`build`](https://github.com/cushion/availability.js/tree/master/build) folder, or use the CDN hosted versions as in the examples.
 
 ## Basic Usage
 
@@ -10,8 +13,8 @@ Availability badge with data from [cushionapp.com](http://cushionapp.com)
 Include the following in your html, and replace your user ID in the `data-user` attribute on the script tag.
 
 ~~~ html
-<link href="availability.css" rel="stylesheet">
-<script src="availability.js" data-user="$YOUR_USER_ID"></script>
+<link href="//static.cushionapp.com/availability.css" rel="stylesheet">
+<script src="//static.cushionapp.com/availability.js" data-user="$YOUR_USER_ID"></script>
 ~~~
 
 #### Contextual Badge
@@ -21,17 +24,29 @@ Include the following in your html, and replace your user ID in the `data-user` 
 Same as the ribbon above, but add an `data-availability-badge` attribute where you want the badge displayed.
 
 ~~~ html
-<link href="availability.css" rel="stylesheet">
-<script src="availability.js" data-user="$YOUR_USER_ID"></script>
+<link href="//static.cushionapp.com/availability.css" rel="stylesheet">
+<script src="//static.cushionapp.com/availability.js" data-user="$YOUR_USER_ID"></script>
 
 <p>I'm currently <span data-availability-badge></span>.</p>
 ~~~
 
 ## Building a custom display
 
-It's possible to change the appearance of the badge and the ribbon using CSS but if that's too limiting you can define your own function to assemble custom HTML, draw with canvas, or even play a silly video.
+While it's possible to change the appearance of the badge and the ribbon using CSS, if that's too limiting you can also define your own function to assemble custom HTML, draw with canvas, or even play a silly video.
 
-Within the render function `this` is bound to an [`Availabilty` object](#availability-object). The function should handle all logic on it's own, and no return value is required.
+To get started just include the javascript on your page.
+
+~~~ html
+<script src="//static.cushionapp.com/availability.js"></script>
+~~~
+
+And use the `Availabilty.display` function.
+
+~~~ javascript
+Availability.display({ user: '$YOUR_USER_ID', render: function() {} })
+~~~
+
+Inside the render function `this` is bound to an [`Availabilty` object](#availability-object). The function should handle all logic on it's own, and no return value is required.
 
 > **Note:** For best results place custom display code at the end of the body before the closing `</body>` tag, or within a [`DOMContentLoaded`](https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded) listener (`$(document).ready` in jQuery).
 
@@ -44,6 +59,7 @@ function gifs () {
   if (this.isUnavailable()) img.src = 'http://i.giphy.com/O4caHIyGGVTW.gif'
   if (this.isSoon())        img.src = 'http://i.giphy.com/ErLimaUL0blbW.gif'
 }
+
 Availability.display({ user: '$YOUR_USER_ID', render: gifs })
 ~~~
 
@@ -110,3 +126,10 @@ Takes an options hash and runs the given `render` function.
 
 - `options.user`: A user ID
 - `options.render`: A [render function](#building-a-custom-display)
+
+
+## Troubleshooting
+
+##### My availability isn't updating
+
+Availability data provided by Cushion is cached for up to one hour
