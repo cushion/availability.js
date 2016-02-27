@@ -4,10 +4,7 @@
 // Constants
 // ===============================================
 
-var MINUTE = 60000
-var HOUR = MINUTE * 60
-var DAY = HOUR * 24
-var MONTH = DAY * 30
+var MONTH = 2628000000 // as seconds
 var BASE_URL = global.__availability_base_url || 'https://my.cushionapp.com'
 var AVAILABLE = 'available'
 var UNAVAILABLE = 'unavailable'
@@ -19,7 +16,7 @@ var PRIVATE = 'private'
 // Availability object
 // ===============================================
 
-var  Availability = function () {
+var Availability = function () {
   this.user = {}
   this.date = null
   this.hours = 0
@@ -80,20 +77,20 @@ Availability.prototype.referralUrl = function () {
 
 function display (options) {
   if (!options.user) return console.error('Must specify a user')
-  if (!options.renderer) return console.error('Must specify a renderer')
+  if (!options.render) return console.error('Must specify a render function')
 
   var availability = new Availability()
 
   // AJAX Request
   var xhr = new XMLHttpRequest()
-  xhr.addEventListener('load', onLoad(availability, options.renderer))
+  xhr.addEventListener('load', onLoad(availability, options.render))
   xhr.open('GET', BASE_URL + '/api/v1/users/' + options.user + '/availability')
   xhr.send()
 
   return availability
 }
 
-function onLoad (availability, renderer) {
+function onLoad (availability, render) {
   return function () {
     switch (this.status) {
     default: return console.error('Cushion API Error', this.status)
@@ -112,10 +109,9 @@ function onLoad (availability, renderer) {
       }
       break
     }
-    return renderer.call(availability)
+    return render.call(availability)
   }
 }
-
 
 
 // Helpers
@@ -163,7 +159,7 @@ function setAttributes (el) {
 
 
 
-// Ribbon Renderer
+// Ribbon display
 // ===============================================
 
 function ribbon (options) {
@@ -179,7 +175,7 @@ function ribbon (options) {
     }
   }
 
-  options.renderer = function () {
+  options.render = function () {
     if (href === undefined) href = this.referralUrl()
 
     var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
@@ -239,7 +235,7 @@ function ribbon (options) {
 
 
 
-// Contextual Badge Renderer
+// Contextual Badge display
 // ===============================================
 
 function badge (options) {
@@ -255,7 +251,7 @@ function badge (options) {
     }
   }
 
-  options.renderer = function () {
+  options.render = function () {
     if (href === undefined) href = this.referralUrl()
 
     var badge = createNestedElement(container, (href ? 'a' : 'span'),
@@ -281,10 +277,9 @@ exports.display = display
 exports.badge = badge
 exports.ribbon = ribbon
 
-if (typeof window !== 'undefined') {
-  window.addEventListener('load', function load () {
-    window.removeEventListener('load', load, false)
-
+if (typeof window !== 'undefined' && global === window) {
+  // If we're running in the browser set up automatically
+  document.addEventListener('DOMContentLoaded', function () {
     var el = document.querySelector('script[data-user]')
     if (!el) return
     var user = el.getAttribute('data-user')

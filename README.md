@@ -27,28 +27,33 @@ Same as the ribbon above, but add an `data-availability-badge` attribute where y
 <p>I'm currently <span data-availability-badge></span>.</p>
 ~~~
 
-## Building a custom renderer
+## Building a custom display
 
-It's possible to change the appearance of the badge and the ribbon using CSS but if that's too limiting you can define your own render function to assemble custom HTML, draw with canvas, or even play a silly video.
+It's possible to change the appearance of the badge and the ribbon using CSS but if that's too limiting you can define your own function to assemble custom HTML, draw with canvas, or even play a silly video.
 
-Within the renderer function `this` is bound to an [`Availabilty` object](#availability-object). The function should handle all logic on it's own, and no return value is required. Here's an example of a simple gif renderer:
+Within the render function `this` is bound to an [`Availabilty` object](#availability-object). The function should handle all logic on it's own, and no return value is required.
+
+> **Note:** For best results place custom display code at the end of the body before the closing `</body>` tag, or within a [`DOMContentLoaded`](https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded) listener (`$(document).ready` in jQuery).
+
+Here's an example of a simple gif display:
 
 ~~~ javascript
-function gifRenderer () {
+function gifs () {
   var img = document.querySelector('.image')
   if (this.isAvailable())   img.src = 'http://i.giphy.com/urhcoANPxB3K8.gif'
   if (this.isUnavailable()) img.src = 'http://i.giphy.com/O4caHIyGGVTW.gif'
   if (this.isSoon())        img.src = 'http://i.giphy.com/ErLimaUL0blbW.gif'
 }
-Availability.display({ user: '$YOUR_USER_ID', renderer: gifRenderer })
+Availability.display({ user: '$YOUR_USER_ID', render: gifs })
 ~~~
 
 ![](https://raw.githubusercontent.com/cushion/availability.js/master/examples/giphy.gif)
 
 
+
 ## Availability object
 
-An Availability object is bound to `this` within a renderer function, and has the following attributes:
+An Availability object is bound to `this` within a render function and has the following attributes:
 
 1. `this.availability`: A string with a value of `available`, `soon`, `unavailable` or `private`
 2. `this.date`: A date object, or null if the above is `unavailable` or `private`
@@ -79,7 +84,7 @@ Returns users referral link.
 
 
 
-## Renderers
+## API
 
 ##### `Availability.badge({options})`
 
@@ -94,14 +99,14 @@ Takes an options hash, and display's a badge.
 
 Takes an options hash, and display's a ribbon.
 
-- `options.user`: The user ID
+- `options.user`: A user ID
 - `options.container`: Optional, an element to appended the ribbon too, `document.body` by default
 - `options.href`: Optional, if set the badge will link to this url, defaults to your referral url (to unset use `null`)
 
 
 ##### `Availability.display({options})`
 
-Takes an options hash and runs the given `renderer`.
+Takes an options hash and runs the given `render` function.
 
-- `options.user`: The user ID
-- `options.renderer`: A [renderer function](#building-a-custom-renderer)
+- `options.user`: A user ID
+- `options.render`: A [render function](#building-a-custom-display)

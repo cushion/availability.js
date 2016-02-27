@@ -47,7 +47,7 @@
   <script>
     Availability.display({
       user: 'dfd64545-e7f2-466f-8d5f-f9c2b998f2ef',
-      renderer: function () {
+      render: function () {
         var img = document.querySelector('.availability-image')
         if (this.isAvailable())   img.src = 'http://i.giphy.com/urhcoANPxB3K8.gif'
         if (this.isUnavailable()) img.src = 'http://i.giphy.com/O4caHIyGGVTW.gif'
