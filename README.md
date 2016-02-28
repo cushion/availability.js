@@ -50,7 +50,7 @@ The appearance of both the badge and ribbon can be modified using CSS. Simply in
 
 If CSS is too limiting, you can also define your own function to assemble custom HTML, draw with canvas, or even play a silly video.
 
-To start, only include the Javascript on your page:
+To start, include only the Availability Badge’s JavaScript file in your HTML:
 
 ~~~ html
 <script src="//static.cushionapp.com/availability.js"></script>
