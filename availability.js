@@ -273,7 +273,7 @@ function badge (options) {
 // Exports
 // ===============================================
 
-exports.display = display
+exports.custom = display
 exports.badge = badge
 exports.ribbon = ribbon
 

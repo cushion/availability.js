@@ -56,10 +56,10 @@ To start, include only the Availability Badge’s JavaScript file in your HTML:
 <script src="//static.cushionapp.com/availability.js"></script>
 ~~~
 
-Then, use the `Availabilty.display` function to define your user ID and render function:
+Then, use the `Availabilty.custom` function to define your user ID and render function:
 
 ~~~ javascript
-Availability.display({ user: '$YOUR_USER_ID', render: function() {} })
+Availability.custom({ user: '$YOUR_USER_ID', render: function() {} })
 ~~~
 
 Inside the `render` function, `this` is bound to an [`Availabilty` object](#availability-object). The function should handle all logic on its own, and no return value is required.
@@ -76,7 +76,7 @@ function renderGIF () {
   if (this.isSoon())        img.src = 'http://i.giphy.com/ErLimaUL0blbW.gif'
 }
 
-Availability.display({ user: '$YOUR_USER_ID', render: renderGIF })
+Availability.custom({ user: '$YOUR_USER_ID', render: renderGIF })
 ~~~
 
 ![](https://raw.githubusercontent.com/cushion/availability.js/master/examples/giphy.gif)
@@ -136,12 +136,12 @@ Takes an options hash and display's a ribbon.
 - `options.href`: Optional, if set the badge will link to this url, defaults to your referral url (to unset use `null`)
 
 
-##### `Availability.display({options})`
+##### `Availability.custom({options})`
 
 Takes an options hash and runs the given `render` function.
 
 - `options.user`: A user ID
-- `options.render`: A [render function](#building-a-custom-display)
+- `options.render`: A [render function](#building-a-custom-badge)
 
 
 ## Troubleshooting
