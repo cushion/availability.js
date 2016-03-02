@@ -4,7 +4,8 @@
   "description": "Display your Cushion availability",
   "main": "availability.js",
   "scripts": {
-    "build": "mkdir -p build && uglifyjs availability.js -m --lint --wrap Availability -o build/availability.js && uglifycss availability.css > build/availability.css"
+    "build": "make",
+    "release": "make release"
   },
   "repository": {
     "type": "git",
