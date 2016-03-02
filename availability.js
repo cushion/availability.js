@@ -129,8 +129,8 @@ function parseDate (date) {
 
 function determineAvailability (date) {
   var diff = date - Date.now()
-  if (date && diff < MONTH) return AVAILABLE
-  if (date && diff < (10 * MONTH)) return SOON
+  if (date && diff < DAY) return AVAILABLE
+  if (date && diff < (10 * DAY)) return SOON
   return UNAVAILABLE
 }
 
