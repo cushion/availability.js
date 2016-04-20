@@ -134,15 +134,19 @@ function determineAvailability (date) {
   return UNAVAILABLE
 }
 
-function createNestedElement (parent, el) {
-  var attrs = Array.prototype.slice.call(arguments, 2)
-  var newElement = document.createElementNS(parent.namespaceURI, el)
-  parent.appendChild(newElement)
+function element (tag) {
+  var attrs = Array.prototype.slice.call(arguments, 1)
+  var element = document.createElement(tag)
   if (attrs.length > 0) {
-    attrs.unshift(newElement)
+    attrs.unshift(element)
     setAttributes.apply(this, attrs)
   }
-  return newElement
+  return element
+}
+
+function append (parent, child) {
+  parent.appendChild(child)
+  return parent
 }
 
 function setAttributes (el) {
@@ -175,64 +179,32 @@ function ribbon (options) {
     }
   }
 
-  options.render = function () {
+  function render () {
     if (href === undefined) href = this.referralUrl()
 
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    setAttributes(svg,
-      ['width', '150px'],
-      ['height', '160px'],
-      ['style', 'position: absolute; top: 0; right: 0;'],
+    var wrapper = element('div',
       ['class', 'availability-ribbon ' + this.availability]
     )
 
-    var defs = createNestedElement(svg, 'defs')
-    createNestedElement(defs, 'path',
-      ['d', 'M17,0 L150,133 Z'],
-      ['id', 'availability_path']
-    )
-    createNestedElement(defs, 'path',
-      ['d', 'M0,17 L183,200 Z'],
-      ['id', 'power_path']
-    )
-    createNestedElement(svg, 'path',
-      ['d', 'M0,0 L50,0 L150,100 L150,150 L0,0 Z'],
+    var availability = element(href ? 'a' : 'div',
+      ['href', href],
+      ['target', '_blank'],
       ['class', 'availability-ribbon__banner']
     )
+    availability.textContent = relative.call(this)
+    append(wrapper, availability)
 
-    var availabilityText = createNestedElement(svg, 'text',
-      ['font-size', 16],
-      ['text-anchor', 'middle'],
-      ['class', 'availability-ribbon__text'],
-      ['x', 96]
-    )
-    var availabilityTextPath = createNestedElement(availabilityText, 'textPath',
-      ['http://www.w3.org/1999/xlink', 'xlink:href', '#availability_path']
-    )
-    availabilityTextPath.textContent = relative.call(this)
+    var powered = element('div', ['class', 'availability-ribbon__power'])
+    powered.textContent = 'powered by Cushion'
+    append(wrapper, powered)
 
-    var powerText = createNestedElement(svg, 'text',
-      ['font-size', 12],
-      ['text-anchor', 'right'],
-      ['class', 'availability-ribbon__power'],
-      ['x', 90]
-    )
-    var powerTextPath = createNestedElement(powerText, 'textPath',
-      ['http://www.w3.org/1999/xlink', 'xlink:href', '#power_path']
-    )
-    powerTextPath.textContent = 'powered by Cushion'
-
-    if (href) {
-      var a = createNestedElement(container, 'a', ['href', href], ['target', '_blank'])
-      a.appendChild(svg)
-    } else {
-      container.appendChild(svg)
-    }
+    append(container, wrapper)
   }
+
+  options.render = render
 
   return display(options)
 }
-
 
 
 // Contextual Badge display
@@ -254,7 +226,7 @@ function badge (options) {
   options.render = function () {
     if (href === undefined) href = this.referralUrl()
 
-    var badge = createNestedElement(container, (href ? 'a' : 'span'),
+    var badge = element(href ? 'a' : 'span',
       ['class', 'availability-badge ' + this.availability]
     )
 
@@ -263,6 +235,8 @@ function badge (options) {
       badge.target = '_blank'
     }
     badge.textContent = relative.call(this)
+
+    append(container, badge)
   }
 
   return display(options)

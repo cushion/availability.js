@@ -1,32 +1,60 @@
 .availability-ribbon {
   display: none;
+  font-family: Helvetica, sans-serif;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 160px;
+  overflow: hidden;
 }
 
 .availability-ribbon.available .availability-ribbon__banner {
-  fill: #6BBD2E;
+  background-color: #6BBD2E;
 }
 
 .availability-ribbon.soon .availability-ribbon__banner {
-  fill: #3498DB;
+  background-color: #3498DB;
 }
 
 .availability-ribbon.unavailable .availability-ribbon__banner {
-  fill: #9E5697;
+  background-color: #9E5697;
 }
 
 .availability-ribbon.private .availability-ribbon__banner {
-  fill: #84487E;
+  background-color: #84487E;
 }
 
-.availability-ribbon__text,
+.availability-ribbon__banner,
 .availability-ribbon__power {
-  font-family: Helvetica;
-  fill: #FFF;
+  display: block;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  width: 212px;
+}
+
+.availability-ribbon__banner {
+  color: #fff;
+  padding: 9px 0;
+  text-align: center;
+  text-decoration: none;
+  -webkit-transform-origin: 44px;
+  -moz-transform-origin: 44px;
+  -ms-transform-origin: 44px;
+  transform-origin: 44px;
 }
 
 .availability-ribbon__power {
-  fill: rgba(187, 187, 187, 0);
-  transition: fill 0.2s ease;
+  color: rgba(187, 187, 187, 0);
+  font-size: 12px;
+  text-align: right;
+  transition: color 0.2s ease;
+  -webkit-transform-origin: 44px -20px;
+  -moz-transform-origin: 44px -20px;
+  -ms-transform-origin: 44px -20px;
+  transform-origin: 44px -20px;
 }
 
 @media (min-width: 600px) {
@@ -36,10 +64,11 @@
 }
 
 @media (min-width: 800px) {
-  .availability-ribbon:hover .availability-ribbon__power {
-    fill: rgba(187, 187, 187, 1);
+  .availability-ribbon__banner:hover + .availability-ribbon__power {
+    color: rgba(187, 187, 187, 1);
   }
 }
+
 
 
 .availability-badge {
