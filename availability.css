@@ -36,7 +36,6 @@
 }
 
 .availability-ribbon__banner {
-  color: #fff;
   padding: 9px 0;
   text-align: center;
   text-decoration: none;
@@ -46,15 +45,20 @@
   transform-origin: 44px;
 }
 
+.availability-ribbon__text {
+  color: #fff;
+  font-size: 16px;
+}
+
 .availability-ribbon__power {
   color: rgba(187, 187, 187, 0);
   font-size: 12px;
   text-align: right;
   transition: color 0.2s ease;
-  -webkit-transform-origin: 44px -20px;
-  -moz-transform-origin: 44px -20px;
-  -ms-transform-origin: 44px -20px;
-  transform-origin: 44px -20px;
+  -webkit-transform-origin: 42px -20px;
+  -moz-transform-origin: 42px -20px;
+  -ms-transform-origin: 42px -20px;
+  transform-origin: 42px -20px;
 }
 
 @media (min-width: 600px) {

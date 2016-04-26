@@ -186,13 +186,16 @@ function ribbon (options) {
       ['class', 'availability-ribbon ' + this.availability]
     )
 
-    var availability = element(href ? 'a' : 'div',
+    var banner = element(href ? 'a' : 'div',
       ['href', href],
       ['target', '_blank'],
       ['class', 'availability-ribbon__banner']
     )
+    append(wrapper, banner)
+
+    var availability = element('span', ['class', 'availability-ribbon__text'])
     availability.textContent = relative.call(this)
-    append(wrapper, availability)
+    append(banner, availability)
 
     var powered = element('div', ['class', 'availability-ribbon__power'])
     powered.textContent = 'powered by Cushion'
