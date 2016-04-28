@@ -1,6 +1,6 @@
 {
   "name": "cushion-availability",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Display your Cushion availability",
   "main": "availability.js",
   "scripts": {

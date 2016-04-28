@@ -4,6 +4,7 @@
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 99999;
   width: 150px;
   height: 160px;
   overflow: hidden;
@@ -36,6 +37,7 @@
 }
 
 .availability-ribbon__banner {
+  line-height: 0;
   padding: 9px 0;
   text-align: center;
   text-decoration: none;
@@ -48,6 +50,7 @@
 .availability-ribbon__text {
   color: #fff;
   font-size: 16px;
+  line-height: normal;
 }
 
 .availability-ribbon__power {
