@@ -50,7 +50,7 @@
 .availability-ribbon__text {
   color: #fff;
   font-size: 16px;
-  line-height: normal;
+  line-height: 16px;
 }
 
 .availability-ribbon__power {
