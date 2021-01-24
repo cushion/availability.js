@@ -275,14 +275,15 @@ exports.ribbon = ribbon
 if (typeof window !== 'undefined' && global === window) {
   // If we're running in the browser set up automatically
   document.addEventListener('DOMContentLoaded', function () {
-    var el = document.querySelector('script[data-user]')
+    const el = document.querySelector('script[data-user]')
     if (!el) return
-    var user = el.getAttribute('data-user')
-    var badgeEl = document.querySelector('[data-availability-badge]')
-    if (badgeEl) {
-      badge({ user: user, container: badgeEl })
-    } else {
-      ribbon({ user: user })
-    }
+    const user = el.getAttribute('data-user')
+    const container = document.querySelector('[data-availability-badge]')
+    
+    // Render ribbon if badge placement is not provided.
+    container ?
+      badge({ user, container })
+    : ribbon({ user })
   })
 }
+
