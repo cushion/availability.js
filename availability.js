@@ -128,9 +128,7 @@ function load(data, availability, render) {
     availability.hours = data.availability.hours_per_week
     availability.availability = determineAvailability(availability.date)
   }
-  return function () {
-    return render.call(availability)
-  }
+  return render.call(availability)
 }
 
 
