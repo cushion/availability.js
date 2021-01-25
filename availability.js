@@ -16,61 +16,63 @@ var PRIVATE = 'private'
 // Availability object
 // ===============================================
 
-var Availability = function () {
-  this.user = {}
-  this.date = null
-  this.hours = 0
-  this.availability = UNAVAILABLE
-}
-
-Availability.prototype.isAvailable = function () { return AVAILABLE === this.availability }
-Availability.prototype.isUnavailable = function () { return UNAVAILABLE === this.availability }
-Availability.prototype.isSoon = function () { return SOON === this.availability }
-Availability.prototype.isPrivate = function () { return PRIVATE === this.availability }
-
-Availability.prototype.monthShort = function () {
-  if (!this.date) return
-  switch (this.date.getMonth()) {
-  case 0:  return 'Jan'
-  case 1:  return 'Feb'
-  case 2:  return 'March'
-  case 3:  return 'April'
-  case 4:  return 'May'
-  case 5:  return 'June'
-  case 6:  return 'July'
-  case 7:  return 'Aug'
-  case 8:  return 'Sept'
-  case 9:  return 'Oct'
-  case 10: return 'Nov'
-  case 11: return 'Dec'
+class Availability {
+  
+  constructor () {
+    this.user = {}
+    this.date = null
+    this.hours = 0
+    this.availability = UNAVAILABLE
   }
-}
 
-Availability.prototype.month = function () {
-  if (!this.date) return
-  switch (this.date.getMonth()) {
-  case 0:  return 'January'
-  case 1:  return 'February'
-  case 2:  return 'March'
-  case 3:  return 'April'
-  case 4:  return 'May'
-  case 5:  return 'June'
-  case 6:  return 'July'
-  case 7:  return 'August'
-  case 8:  return 'September'
-  case 9:  return 'October'
-  case 10: return 'November'
-  case 11: return 'December'
+  isAvailable   = () => AVAILABLE === this.availability;
+  isUnavailable = () => UNAVAILABLE === this.availability;
+  isSoon        = () => SOON === this.availability;
+  isPrivate     = () => PRIVATE === this.availability;
+
+  monthShort () {
+    if (!this.date) return
+    switch (this.date.getMonth()) {
+    case 0:  return 'Jan'
+    case 1:  return 'Feb'
+    case 2:  return 'March'
+    case 3:  return 'April'
+    case 4:  return 'May'
+    case 5:  return 'June'
+    case 6:  return 'July'
+    case 7:  return 'Aug'
+    case 8:  return 'Sept'
+    case 9:  return 'Oct'
+    case 10: return 'Nov'
+    case 11: return 'Dec'
+    }
   }
-}
 
-Availability.prototype.referralUrl = function () {
-  if (this.user && this.user.referral_code) {
-    return 'http://get.cushionapp.com/' + this.user.referral_code
+  month () {
+    if (!this.date) return
+    switch (this.date.getMonth()) {
+    case 0:  return 'January'
+    case 1:  return 'February'
+    case 2:  return 'March'
+    case 3:  return 'April'
+    case 4:  return 'May'
+    case 5:  return 'June'
+    case 6:  return 'July'
+    case 7:  return 'August'
+    case 8:  return 'September'
+    case 9:  return 'October'
+    case 10: return 'November'
+    case 11: return 'December'
+    }
   }
+
+  referralUrl () {
+    if (this.user && this.user.referral_code) {
+      return 'http://get.cushionapp.com/' + this.user.referral_code
+    }
+  }
+
 }
-
-
 
 // Main display function
 // ===============================================
@@ -81,36 +83,52 @@ function display (options) {
 
   var availability = new Availability()
 
-  // AJAX Request
-  var xhr = new XMLHttpRequest()
-  xhr.addEventListener('load', onLoad(availability, options.render))
-  xhr.open('GET', BASE_URL + '/api/v1/users/' + options.user + '/availability')
-  xhr.send()
+  // Fetch request
+  const request = fetch(BASE_URL + '/api/v1/users/' + options.user + '/availability')
+    
+    // Check status
+    .then( response => {
+      switch (response.status) {
+
+        case 200:
+          return response.json()
+          break
+
+        case 404: 
+          throw new Error('That user ID wasnt found');
+          return;
+          break;
+
+        case 401:
+          throw new Error('Enable the Availability Badge: ' + BASE_URL + '/add-ons/availability-badge')
+          availability.availability = PRIVATE
+          return;
+          break;
+
+        default: 
+          throw new Error('Cushion API Error', response.status)
+          return;
+      }
+        
+    })
+
+    // If successful, load.
+    .then( data => load( data, availability, render ))
+
+    // If unsuccessful, log error
+    .catch( error => console.error( error.message ))
 
   return availability
 }
 
-function onLoad (availability, render) {
-  return function () {
-    switch (this.status) {
-    default: return console.error('Cushion API Error', this.status)
-    case 404: return console.error('That user ID wasnt found')
-    case 401:
-      console.error('Enable the Availability Badge: ' + BASE_URL + '/add-ons/availability-badge')
-      availability.availability = PRIVATE
-      break
-    case 200:
-      var data = JSON.parse(this.response)
-      if (data.user) availability.user = data.user
-      if (data.availability) {
-        availability.date = parseDate(data.availability.available_on)
-        availability.hours = data.availability.hours_per_week
-        availability.availability = determineAvailability(availability.date)
-      }
-      break
-    }
-    return render.call(availability)
+function load(data, availability, render) {
+  if (data.user) availability.user = data.user;
+  if (data.availability) {
+    availability.date = parseDate(data.availability.available_on)
+    availability.hours = data.availability.hours_per_week
+    availability.availability = determineAvailability(availability.date)
   }
+  return render.call(availability)
 }
 
 
@@ -257,14 +275,15 @@ exports.ribbon = ribbon
 if (typeof window !== 'undefined' && global === window) {
   // If we're running in the browser set up automatically
   document.addEventListener('DOMContentLoaded', function () {
-    var el = document.querySelector('script[data-user]')
+    const el = document.querySelector('script[data-user]')
     if (!el) return
-    var user = el.getAttribute('data-user')
-    var badgeEl = document.querySelector('[data-availability-badge]')
-    if (badgeEl) {
-      badge({ user: user, container: badgeEl })
-    } else {
-      ribbon({ user: user })
-    }
+    const user = el.getAttribute('data-user')
+    const container = document.querySelector('[data-availability-badge]')
+    
+    // Render ribbon if badge placement is not provided.
+    container ?
+      badge({ user, container })
+    : ribbon({ user })
   })
 }
+
